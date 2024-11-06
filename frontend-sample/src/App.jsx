@@ -3,6 +3,7 @@ import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import { useState } from 'react'
 import Notify from './components/Notify'
+import PhoneForm from './components/PhoneForm'
 
 const ALL_PERSONS = gql`
   query {
@@ -35,6 +36,7 @@ const App = () => {
       <Notify errorMessage={errorMessage} />
       <PersonForm setError={notify} />
       <Persons persons={result.data.allPersons} />
+      <PhoneForm setError={notify} />
     </div>
   )
 }
