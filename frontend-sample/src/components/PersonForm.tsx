@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import React from "react";
 import { ALL_PERSONS, CREATE_PERSON } from "../queries";
 
