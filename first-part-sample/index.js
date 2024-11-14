@@ -158,11 +158,37 @@ const resolvers = {
   Mutation: {
     addPerson: async (root, args) => {
       const person = new Person({ ...args })
+
+      try {
+        await person.save();
+      } catch (error) {
+        throw new GraphQLError('Saving person failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+            error
+          }
+        })
+      }
+      
       return person.save()
     },
     editNumber: async (root, args) => {
       const person = await Person.findOne({ name: args.name })
       person.phone = args.phone
+
+      try {
+        await person.save();
+      } catch (error) {
+        throw new GraphQLError('Saving number failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+            error,
+          },
+        });
+      }
+      
       return person.save()
     },
   },
