@@ -6,8 +6,8 @@ const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
 const Author = require('./models/author')
 const Book = require('./models/book');
-const book = require("./models/book");
 const { GraphQLError } = require("graphql");
+const person = require("../first-part-sample/models/person");
 
 require('dotenv').config()
 
@@ -160,7 +160,7 @@ const typeDefs = `
 const resolvers = {
   Query: {
     bookCount: async () => Book.collection.countDocuments(),
-    authorCount: () => authors.length,
+    authorCount: () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
       return Book.find({})
       // const {author, genre} = args
@@ -173,12 +173,18 @@ const resolvers = {
       //   return matchesAuthor && matchesGenre;
       // })
     },
-    allAuthors: () => authors,
+    allAuthors: async () => Author.find({}),
 
   },
   Author: {
     bookCount: (root) => {
       return books.reduce((accu, curr) => (root.name === curr.author ? accu + 1 : accu), 0);
+    }
+  },
+  Book: {
+    author: async (root) => {
+      const author = await Author.findById(root.author)
+      return author
     }
   },
   Mutation: {
@@ -215,18 +221,36 @@ const resolvers = {
 
       // return newBook
     },
-    editAuthor: (root, args) => {
+    editAuthor: async (root, args) => {
       const {name, setBornTo} = args
-      const author = authors.find(a => a.name === name);
-      if(!author) {
-        return null
+
+      const author = await Author.findOne({name:name})
+      author.born = setBornTo
+
+      try {
+        await author.save()
+      } catch (err) {
+        throw new GraphQLError('Saving author birthdate failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.name,
+            err
+          }
+        })
+
       }
 
-      const updatedAuthor = {...author, born: setBornTo}
+      return author.save()
+      // const author = authors.find(a => a.name === name);
+      // if(!author) {
+      //   return null
+      // }
 
-      authors = authors.map(a => a.name === name ? updatedAuthor : a)
+      // const updatedAuthor = {...author, born: setBornTo}
 
-      return updatedAuthor
+      // authors = authors.map(a => a.name === name ? updatedAuthor : a)
+
+      // return updatedAuthor
     }
   }
 };
