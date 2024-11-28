@@ -162,7 +162,10 @@ const resolvers = {
     bookCount: async () => Book.collection.countDocuments(),
     authorCount: () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
-      return Book.find({})
+      const { genre } = args
+      if(!genre) return Book.find({})
+      
+      return Book.find({genres: genre})
       // const {author, genre} = args
       // if(!author && !genre) return books
 
