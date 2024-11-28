@@ -192,6 +192,24 @@ const resolvers = {
   },
   Mutation: {
     addBook: async (root, {title, published, author, genres}) => {
+      if (title.length < 5) {
+        throw new GraphQLError('Title must be at least 5 characters long', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: title,
+          },
+        })
+      }
+
+      if (author.length < 4) {
+        throw new GraphQLError('Author must be at least 4 characters long', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: author,
+          },
+        })
+      }
+
       let existingAuthor = await Author.findOne({name: author})
       if(!existingAuthor) {
         existingAuthor = new Author({name: author});
