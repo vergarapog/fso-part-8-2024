@@ -203,8 +203,9 @@ const resolvers = {
     }
   },
   Author: {
-    bookCount: (root) => {
-      return books.reduce((accu, curr) => (root.name === curr.author ? accu + 1 : accu), 0);
+    bookCount: async (root) => {
+      const bookCount = Book.find({author: root._id})
+      return bookCount.length
     }
   },
   Book: {
