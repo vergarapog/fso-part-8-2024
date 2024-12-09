@@ -4,11 +4,16 @@ import { useState } from "react"
 import { EDIT_AUTHOR } from "../queries";
 
 // eslint-disable-next-line react/prop-types
-const BornForm = ({authors}) => {
+const BornForm = ({authors, setError}) => {
     const [author, setAuthor] = useState('')
     const [born, setBorn] = useState('')
 
-  const [changeBorn] = useMutation(EDIT_AUTHOR);
+  const [changeBorn] = useMutation(EDIT_AUTHOR, {
+    onError: (error) => {
+        const messages = error.graphQLErrors.map((e) => e.message).join("\n");
+        setError(messages);
+      },
+  });
 
 
     const submit = (e) => {

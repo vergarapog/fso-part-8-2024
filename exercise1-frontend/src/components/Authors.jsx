@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useQuery } from "@apollo/client"
 import { ALL_AUTHORS } from "../queries"
 import BornForm from "./BornForm"
@@ -35,7 +36,7 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
-      <BornForm authors={authors}/>
+      <BornForm authors={authors} setError={props.setError}/>
     </div>
   )
 }
