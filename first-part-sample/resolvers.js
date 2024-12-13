@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 const Person = require('./models/person')
 const User = require('./models/user')
 
+
 const resolvers = {
     Query: {
       personCount: async () => Person.collection.countDocuments(),
@@ -58,11 +59,6 @@ const resolvers = {
         pubsub.publish('PERSON_ADDED', {personAdded: person})
 
         return person
-      },
-      Subscription: {
-        personAdded: {
-          subscribe: () => pubsub.asyncIterator('PERSON_ADDED')
-        }
       },
       addAsFriend: async (root, args, { currentUser }) => {
         const isFriend = (person) => 
@@ -133,6 +129,11 @@ const resolvers = {
     
         return { value: jwt.sign(userForToken, process.env.JWT_SECRET) }
       },
+    },
+    Subscription: {
+      personAdded: {
+        subscribe: () => pubsub.asyncIterableIterator('PERSON_ADDED')
+      }
     },
   }
 
